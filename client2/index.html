@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>WebSocket Client 2</h2>
+        
+        <button @click="connect">Connect</button>
+        <button @click="disconnect">Disconnect</button>
+        <button @click="sendMsg">Send message</button>
+        
+        <p>{{ connStatus }}</p>
+        <p>{{ response }}</p>
+    </div>
+    
+    <script>
+        var app = new Vue({
+            el: '#app',
+            
+            data() {
+                return {
+                    send: "Hello world",
+                    socket: '',
+                    connStatus: 'default',
+                    response: 'default'
+                }
+            },
+            
+            methods: {
+                connect() {
+                    var stat = this.connStatus;
+                    this.socket = new WebSocket('ws://localhost:8080');
+                    this.socket.addEventListener('open', function(open) {
+                        console.log();
+                        stat = "connected to server";
+                        console.log(stat);
+                    })
+
+                    this.connStatus = stat;
+                    
+                    
+                    this.socket.addEventListener('close', function(close) {
+                        console.log(this.connStatus);
+                        this.connStatus = "disconnected from server";
+                        console.log(this.connStatus);
+                    })
+                    
+                    this.socket.addEventListener('message', function(message) {
+                        console.log(this.response);
+                        this.response = message.data;
+                        console.log(this.response);
+                    })
+
+                },
+                disconnect() {
+                    this.socket.close();
+                },
+                sendMsg: function() {
+                    // this.socket.send(this.send);
+                    // console.log('message has been sent');
+
+                    this.response = "changed"
+                    
+                }
+            }
+        })
+    </script>
+</body>
+</html>
