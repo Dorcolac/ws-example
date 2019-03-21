@@ -25,10 +25,10 @@
             
             data() {
                 return {
-                    send: "Hello world",
+                    msg: "Hello world",
                     socket: '',
-                    connStatus: 'default',
-                    response: 'default'
+                    connStatus: 'waiting for connection',
+                    response: 'no response'
                 }
             },
             
@@ -36,23 +36,17 @@
                 connect() {
                     var stat = this.connStatus;
                     this.socket = new WebSocket('ws://localhost:8080');
-                    this.socket.addEventListener('open', function(open) {
-                        console.log();
-                        stat = "connected to server";
-                        console.log(stat);
-                    })
-
-                    this.connStatus = stat;
-                    
-                    
-                    this.socket.addEventListener('close', function(close) {
+                    this.socket.addEventListener('open', (open) => {
+                        this.connStatus = "connected to server";
                         console.log(this.connStatus);
+                    })                    
+                    
+                    this.socket.addEventListener('close', (close) => {
                         this.connStatus = "disconnected from server";
                         console.log(this.connStatus);
                     })
                     
-                    this.socket.addEventListener('message', function(message) {
-                        console.log(this.response);
+                    this.socket.addEventListener('message', (message) => {
                         this.response = message.data;
                         console.log(this.response);
                     })
@@ -61,11 +55,9 @@
                 disconnect() {
                     this.socket.close();
                 },
-                sendMsg: function() {
-                    // this.socket.send(this.send);
-                    // console.log('message has been sent');
-
-                    this.response = "changed"
+                sendMsg() {
+                    this.socket.send(this.msg);
+                    console.log('message has been sent');
                     
                 }
             }
